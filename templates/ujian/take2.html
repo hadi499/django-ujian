@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="flex justify-center">
+
+  <div class="w-[800px]" >
+    <div class=" mb-4 flex justify-end items-center space-x-1 mt-6">
+      <span class="text-lg font-semibold">Time Remaining: </span>
+      <span id="timer-ujian" class="text-lg font-bold text-red-600">{{ ujian.time }}</span> <span class="text-sm font-semibold">secs</span>
+    
+    </div>
+
+    <form id="quiz-form-ujian" method="POST" action="{% url 'ujian_submit' ujian.pk %}">
+      {% csrf_token %}
+      <h1 class="text-2xl text-center font-semibold my-4">{{ ujian.name }}</h1>
+      <div class="flex justify-evenly gap-2 flex-wrap">
+        {% for question in questions %}
+          <div class=" border shadow mb-4 w-[250px]">
+            <h3 class="text-center text-xl font-semibold py-2 bg-blue-100 mb-2">{{ question.title }}</h3>
+            <div class="ml-8 space-y-3 mb-3">
+              <label><input type="radio" name="question_{{ question.id }}" value="{{ question.option_a }}"> {{ question.option_a }}</label><br>
+              <label><input type="radio" name="question_{{ question.id }}" value="{{ question.option_b }}"> {{ question.option_b }}</label><br>
+              <label><input type="radio" name="question_{{ question.id }}" value="{{ question.option_c }}"> {{ question.option_c }}</label><br>
+  
+            </div>
+          </div>
+        {% endfor %}
+
+
+      </div>
+      <div class="flex justify-end">
+        <button type="submit" class="border border-blue-600 text-sm font-semibold px-2 py-1 rounded-sm text-blue-600 hover:bg-blue-600 hover:text-white">Submit</button>
+
+      </div>
+    </form>
+
+  </div>
+
+  
+
+</div>
+
+<!-- JavaScript for Timer and Auto-Submit -->
+<script>
+  // Get the quiz time from the server (in seconds)
+  var timeRemaining = {{ ujian.time }};
+  
+  // Update the countdown timer every second
+  var timerElement = document.getElementById('timer-ujian');
+  var countdownInterval = setInterval(function() {
+    // Decrease the time remaining
+    timeRemaining--;
+
+    // Update the timer display
+    timerElement.textContent = timeRemaining;
+
+    // If time runs out, submit the form automatically
+    if (timeRemaining <= 0) {
+      clearInterval(countdownInterval); // Stop the timer
+      document.getElementById('quiz-form-ujian').submit(); // Auto-submit the form
+    }
+  }, 1000); // 1000 milliseconds = 1 second
+</script>
+
+{% endblock %}

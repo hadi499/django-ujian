@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="flex justify-center">
+
+  <div class="w-[300px]">
+    <h1 class="text-2xl font-semibold my-4">{{ ujian.name }} - Tes</h1>
+    <div class="p-3 border shadow-lg">
+      <p class="text-xl font-semibold">Your Score: {{ score }}</p>
+      <p class="text-xl font-semibold">Correct Answers: <span class="text-blue-700">{{ correct_answers }}</span> out of {{ total_questions }}</p>
+    </div>
+  
+    <div class="mt-6">
+      <a href="{% url 'ujian_reset' ujian.pk %}" class="p-2 border border-red-400 text-sm text-red-500 font-semibold">Reset Ujian</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+    // Menghapus item terkait ujian dari localStorage saat halaman dimuat
+    window.onload = function() {
+        localStorage.removeItem('timeRemaining'); // Hapus waktu yang tersisa
+        // Tambahkan item lain yang perlu dihapus di sini
+        localStorage.removeItem('ujian_{{ ujian.pk }}_answers'); // Hapus jawaban ujian jika ada
+    };
+</script>
+
+{% endblock %}

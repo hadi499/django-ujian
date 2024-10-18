@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="flex justify-center mt-8">
+
+  <div class="w-[300px] p-3 border">
+
+    <div class="text-lg font-semibold">
+
+      <h1>{{ ujian.name }}</h1>
+      <p>Topic: {{ ujian.topic }}</p>
+      <p>Number of Questions: {{ ujian.number_of_questions }}</p>
+      <p>Time: {{ ujian.time }} seconds</p>
+      <p>Required Score to Pass: {{ ujian.required_score_to_pass }}</p>
+
+    </div>
+
+    <div class="mt-4">
+
+      <a href="{% url 'ujian_take' ujian.pk first_question_id %}" 
+      class="border border-blue-600 text-sm font-semibold px-2 py-1 rounded-sm text-blue-600 hover:bg-blue-600 hover:text-white">
+      Mulai Ujian
+   </a>
+
+    </div>
+
+  </div>
+  
+  
+
+</div>
+  
+{% endblock %}

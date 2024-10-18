@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<div class="flex justify-center mt-6">
+
+  <div class="w-full p-2 md:w-[400px]">
+    <h1 class="text-2xl font-semibold my-4">{{ ujian.name }}</h1>
+
+    <!-- Timer untuk ujian -->
+    <div class="mb-4 flex justify-end items-center space-x-1 mt-6">
+      <span class="text-lg font-semibold">Time Remaining: </span>
+      <span id="timer-ujian" class="text-lg font-bold text-red-600">{{ ujian.time }}</span> 
+      <span class="text-sm font-semibold">secs</span>
+    </div>
+
+    <!-- Form pertanyaan -->
+    <div class="question">
+      <form method="POST" id="form-ujian" action="{% url 'ujian_take' ujian.pk current_question.id %}">
+        {% csrf_token %}
+        <div class="border">
+          <h2 class="text-xl p-2 mb-2">{{ current_question.title }}</h2>
+          <div class="flex flex-col space-y-2 ml-3 p-2">
+            <label>
+              <input type="radio" name="question_{{ current_question.id }}" value="{{ current_question.option_a }}"
+                     {% if stored_answers|get_item:current_question.id == current_question.option_a %}checked{% endif %}>
+              {{ current_question.option_a }}
+            </label>
+            <label>
+              <input type="radio" name="question_{{ current_question.id }}" value="{{ current_question.option_b }}"
+                     {% if stored_answers|get_item:current_question.id == current_question.option_b %}checked{% endif %}>
+              {{ current_question.option_b }}
+            </label>
+            <label>
+              <input type="radio" name="question_{{ current_question.id }}" value="{{ current_question.option_c }}"
+                     {% if stored_answers|get_item:current_question.id == current_question.option_c %}checked{% endif %}>
+              {{ current_question.option_c }}
+            </label>
+          </div>
+        </div>
+
+        <!-- Navigasi pertanyaan -->
+        <div class="mt-4">
+          <h3 class="text-lg font-semibold mb-2">Nomor Pertanyaan:</h3>
+          <div class="flex gap-3 flex-wrap">
+            {% for question in questions %}
+              <button type="submit" name="next_question_id" value="{{ question.id }}"
+                      class="py-2 px-4 border{% if question.id == current_question.id %} border-blue-400 {% endif %}{% if stored_answers|get_item:question.id %} bg-yellow-100{% endif %}">
+                {{ forloop.counter }}
+              </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Tombol Simpan dan Selesai -->
+        {% if current_question == questions.last %}
+          <div class="mt-4">
+            <button type="submit" id="finish-button" name="finish_exam" value="true" class="p-2 border border-blue-500">Simpan dan Selesai</button>
+          </div>
+        {% else %}
+         <button type="submit" id="finish-button" name="finish_exam" value="true" ></button> 
+        {% endif %}
+
+       
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- Timer JS dan Otomatis Submit -->
+<script>
+  // Ambil waktu yang tersisa dari localStorage jika ada
+  var timeRemaining = localStorage.getItem('timeRemaining') ? parseInt(localStorage.getItem('timeRemaining')) : {{ ujian.time }};
+  var timerElement = document.getElementById('timer-ujian');
+
+  function updateTimer() {
+      if (timeRemaining > 0) {
+          var minutes = Math.floor(timeRemaining / 60);
+          var seconds = timeRemaining % 60;
+
+          timerElement.textContent = minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
+          timeRemaining--;
+          localStorage.setItem('timeRemaining', timeRemaining);
+      } else {
+          clearInterval(timerInterval);
+        
+          var finishButton = document.getElementById('finish-button');
+          if (finishButton) {
+              finishButton.click();  // Simulasikan klik tombol
+          }
+      }
+  }
+
+  var timerInterval = setInterval(updateTimer, 1000);
+  updateTimer();
+
+ 
+</script>
+
+{% endblock %}

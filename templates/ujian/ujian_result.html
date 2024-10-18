@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="flex justify-center"> 
+
+  <div class="w-[400px] mt-6">
+
+    <h1 class="text-2xl text-center font-bold mb-4">Hasil Ujian</h1>
+    <p class="text-lg">You scored: <span class="font-semibold">{{ score }}</span></p>
+    <p class="text-lg">Correct Answers: <span class="font-semibold">{{ correct_answers }} from {{ total_questions }}</span></p>
+    
+    {% if passed %}
+      <p class="text-green-600">Congratulations! You passed the quiz.</p>
+    {% else %}
+      <p class="text-red-600">Sorry, you did not pass the quiz. Try again!</p>
+    {% endif %}
+
+    <div class="mt-6">
+      {% for question in question_details %}
+      <div class="mb-4 p-4 rounded-sm text-center text-lg font-semibold {% if question.is_correct %}bg-green-200{% else %}bg-red-200{% endif %}">
+        <span>{{ question.title }}</span> |  
+        {% if question.selected_answer %}
+        <span>Your Answer:</span> <span >{{ question.selected_answer }}</span> 
+        {% else %}  
+        <span >Not answered</span>
+        {% endif %}
+      </div>
+    {% endfor %}
+    </div>
+
+    <div class="flex justify-end">
+      <a href="{% url 'ujian_detail' ujian.id %}" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded-sm hover:bg-blue-600">Mulai game lagi</a>
+
+    </div>
+
+
+
+  </div>
+
+
+
+</div>
+  
+
+ 
+   
+
+
+ 
+{% endblock %}
